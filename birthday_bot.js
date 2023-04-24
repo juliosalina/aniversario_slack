@@ -8,6 +8,15 @@ const client = new WebClient(slackToken);
 
 const BIRTHDAY_FIELD_ID = 'Birthday';
 
+function convertDateFormat(birthday) {
+  const isWrongFormat = /^\d{2}\/\d{2}\/\d{4}$/.test(birthday);
+  if (isWrongFormat) {
+    const [day, month, year] = birthday.split('/');
+    return `${year}-${month}-${day}`;
+  }
+  return birthday;
+}
+
 async function getBirthdaysFromSlack() {
   try {
     const response = await client.users.list();
@@ -20,7 +29,8 @@ async function getBirthdaysFromSlack() {
         const displayName = user.profile.display_name || user.profile.real_name;
         const birthday = user.profile[BIRTHDAY_FIELD_ID];
         if (birthday) {
-          birthdays.push({ userId, birthday, name: displayName });
+          const formattedBirthday = convertDateFormat(birthday);
+          birthdays.push({ userId, birthday: formattedBirthday, name: displayName });
         }
       }
     }
