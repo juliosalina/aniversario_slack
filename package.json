@@ -1,0 +1,23 @@
+{
+  "name": "aniversario_slack",
+  "version": "1.0.0",
+  "description": "",
+  "main": "birthday_bot.js",
+  "dependencies": {
+    "dotenv": "^16.0.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juliosalina/aniversario_slack.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/juliosalina/aniversario_slack/issues"
+  },
+  "homepage": "https://github.com/juliosalina/aniversario_slack#readme"
+}

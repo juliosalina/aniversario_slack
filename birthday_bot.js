@@ -6,8 +6,6 @@ dotenv.config();
 const slackToken = process.env.SLACK_BOT_TOKEN;
 const client = new WebClient(slackToken);
 
-const BIRTHDAY_FIELD_ID = 'Birthday';
-
 function convertDateFormat(birthday) {
   const isWrongFormat = /^\d{2}\/\d{2}\/\d{4}$/.test(birthday);
   if (isWrongFormat) {
@@ -26,10 +24,12 @@ async function getBirthdaysFromSlack() {
     for (const user of users) {
       if (!user.is_bot && !user.deleted) {
         const userId = user.id;
+        const response_new = await client.users.profile.get({ user: userId });
         const displayName = user.profile.display_name || user.profile.real_name;
-        const birthday = user.profile[BIRTHDAY_FIELD_ID];
+        const birthday = response_new.profile.fields['Xf051TAX1QQJ'];
+
         if (birthday) {
-          const formattedBirthday = convertDateFormat(birthday);
+          const formattedBirthday = convertDateFormat(birthday['value']);
           birthdays.push({ userId, birthday: formattedBirthday, name: displayName });
         }
       }
@@ -75,10 +75,13 @@ async function sendBirthdayWishes(userId, name) {
 
 async function main() {
   const birthdays = await getBirthdaysFromSlack();
-  const today = new Date().toISOString().slice(0, 10);
+  const today = new Date();
+  const currentMonth = today.getMonth() + 1;
+  const currentDay = today.getDate();
 
   for (const person of birthdays) {
-    if (person.birthday === today) {
+    const [year, month, day] = person.birthday.split('-').map(Number);
+    if (month === currentMonth && day === currentDay) {
       await sendBirthdayWishes(person.userId, person.name);
     }
   }
